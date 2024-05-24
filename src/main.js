@@ -1,19 +1,18 @@
-import './assets/main.css'
-
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
-import 'bootstrap'
-
 import App from './App.vue'
 import router from './router'
-
-// Import Bootstrap and BootstrapVue CSS files (order is important)
+import 'vue3-toastify/dist/index.css'
+import Vue3Toastify from 'vue3-toastify'
 import 'bootstrap/dist/css/bootstrap.css'
-import 'bootstrap-vue/dist/bootstrap-vue.css'
 
 const app = createApp(App)
 
 app.use(createPinia())
+app.use(Vue3Toastify, {
+  autoClose: 3000
+})
 app.use(router)
+app.config.globalProperties.$toast = Vue3Toastify.toast
 
 app.mount('#app')

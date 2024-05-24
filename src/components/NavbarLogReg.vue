@@ -19,13 +19,12 @@
             <router-link class="nav-link active" aria-current="page" to="/home">Home</router-link>
           </li>
           <li class="nav-item">
-            <router-link class="nav-link" to="/appointment">New Appointment</router-link>
+            <router-link class="nav-link" to="/new-appointment">New Appointment</router-link>
           </li>
         </ul>
         <form class="d-flex">
           <router-link class="btn btn-outline-danger d-flex align-items-center" to="/login">
-            <img src="../assets/logout_icon.png" alt="Logout" width="24" height="24" />
-            <span class="ms-2">Logout</span>
+            <span class="ms-2">Login</span>
           </router-link>
         </form>
       </div>

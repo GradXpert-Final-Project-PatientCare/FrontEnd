@@ -1,24 +1,27 @@
 <template>
-  <div class="wrapper">
-    <div class="logo">
-      <img src="../assets/logo.png" alt="" />
-    </div>
-    <div class="text-center mt-4 name">PatientCare App</div>
-    <form class="p-3 mt-3" @submit.prevent="login">
-      <div class="form-field d-flex align-items-center">
-        <span class="far fa-user"></span>
-        <input type="text" v-model="username" placeholder="Username" />
+  <div>
+    <Navbar />
+    <div class="wrapper">
+      <div class="logo">
+        <img src="../assets/logo.png" alt="" />
       </div>
-      <div class="form-field d-flex align-items-center">
-        <span class="fas fa-key"></span>
-        <input type="password" v-model="password" placeholder="Password" />
+      <div class="text-center mt-4 name">PatientCare App</div>
+      <form class="p-3 mt-3" @submit.prevent="login">
+        <div class="form-field d-flex align-items-center">
+          <span class="far fa-user"></span>
+          <input type="text" v-model="username" placeholder="Username" />
+        </div>
+        <div class="form-field d-flex align-items-center">
+          <span class="fas fa-key"></span>
+          <input type="password" v-model="password" placeholder="Password" />
+        </div>
+        <button class="btn mt-3">Login</button>
+      </form>
+      <div class="text-center fs-6">
+        <router-link to="/forgot-password">Forget password?</router-link> or
+        <router-link v-if="!isAuthenticated" to="/register">Sign up</router-link>
+        <router-link v-else to="/home">Home</router-link>
       </div>
-      <button class="btn mt-3">Login</button>
-    </form>
-    <div class="text-center fs-6">
-      <router-link to="/forgot-password">Forget password?</router-link> or
-      <router-link v-if="!isAuthenticated" to="/register">Sign up</router-link>
-      <router-link v-else to="/home">Home</router-link>
     </div>
   </div>
 </template>
@@ -26,6 +29,7 @@
 <script setup>
 import { useRouter } from 'vue-router'
 import { ref } from 'vue'
+import Navbar from './NavbarLogReg.vue'
 
 const router = useRouter()
 

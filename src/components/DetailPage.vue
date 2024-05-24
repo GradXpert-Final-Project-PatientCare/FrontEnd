@@ -38,24 +38,31 @@
       </div>
       <div class="col-md-6">
         <!-- Bagian kanan -->
-        <div class="text-center">
+        <div v-if="doctor" class="text-center">
           <img
             src="../assets/dokter_random.jpg"
             class="img-thumbnail"
             style="max-width: 300px; height: auto"
             alt="Gambar Dokter"
           />
+          <div class="mt-3">
+            <p><strong>Nama Dokter:</strong> {{ doctor.name }}</p>
+            <p><strong>Spesialis:</strong> {{ doctor.specialty }}</p>
+            <p><strong>Alamat Praktek:</strong> {{ doctor.address }}</p>
+            <p><strong>Jadwal Praktek:</strong> {{ doctor.schedule }}</p>
+            <p><strong>Phone Number:</strong> {{ doctor.phone }}</p>
+            <p><strong>Email:</strong> {{ doctor.email }}</p>
+          </div>
+          <div class="text-end mt-3">
+            <router-link
+              :to="{ name: 'new-appointment', query: { doctorId: doctor.id } }"
+              class="btn btn-primary"
+              >Buat Janji Temu</router-link
+            >
+          </div>
         </div>
-        <div class="mt-3">
-          <p><strong>Nama Dokter:</strong> Dr. John Doe</p>
-          <p><strong>Spesialis:</strong> Dokter Umum</p>
-          <p><strong>Alamat Praktek:</strong> Jl. Contoh No. 123</p>
-          <p><strong>Jadwal Praktek:</strong> Senin - Jumat, 08:00 - 17:00</p>
-          <p><strong>Phone Number:</strong> 08123456789</p>
-          <p><strong>Email:</strong> johndoe@example.com</p>
-        </div>
-        <div class="text-end mt-3">
-          <button class="btn btn-primary">Buat Janji</button>
+        <div v-else class="text-center">
+          <p>Loading...</p>
         </div>
       </div>
     </div>
@@ -63,7 +70,24 @@
 </template>
 
 <script setup>
-// Data dan logika dapat ditambahkan di sini jika diperlukan
+import { ref, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
+import { useDoctorStore } from '../stores/doctorStore'
+
+const route = useRoute()
+const store = useDoctorStore()
+const doctor = ref(null)
+
+onMounted(async () => {
+  const doctorId = route.params.id
+  console.log('Fetched doctorId from route:', doctorId) // Log the doctorId
+  await store.fetchDoctors()
+  console.log('Fetched doctors:', store.doctors) // Log the doctors list
+
+  // Ensure doctorId is the correct type
+  doctor.value = store.doctors.find((d) => d.id == doctorId) // Use == for type coercion
+  console.log('Found doctor:', doctor.value) // Log the found doctor
+})
 </script>
 
 <style scoped>

@@ -27,9 +27,24 @@ const router = createRouter({
       component: () => import('../views/RegisterView.vue')
     },
     {
-      path: '/detail',
+      path: '/detail/:id',
       name: 'detail',
       component: () => import('../views/DetailView.vue')
+    },
+    {
+      path: '/new-appointment',
+      name: 'new-appointment',
+      component: () => import('../views/AppointmentView.vue')
+    },
+    {
+      path: '/invoice',
+      name: 'Invoice',
+      component: () => import('../views/InvoiceView.vue')
+    },
+    {
+      path: '/appointment-history',
+      name: 'appointment-history',
+      component: () => import('../views/HistoryView.vue')
     }
   ]
 })

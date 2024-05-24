@@ -1,9 +1,9 @@
 <script setup>
-import RegistrationPage from '../components/RegistrationPage.vue'
+import RegisterPage from '../components/RegisterPage.vue'
 </script>
 
 <template>
   <main>
-    <RegistrationPage />
+    <RegisterPage />
   </main>
 </template>

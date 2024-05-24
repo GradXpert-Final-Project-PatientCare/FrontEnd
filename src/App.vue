@@ -1,10 +1,7 @@
-<script setup>
-import AppNavbar from '../src/components/AppNavbar.vue'
-</script>
+<script setup></script>
 
 <template>
   <div id="app">
-    <AppNavbar />
     <RouterView />
   </div>
 </template>
