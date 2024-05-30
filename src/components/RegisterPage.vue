@@ -52,18 +52,11 @@
           <span class="fas fa-phone"></span>
           <input
             type="text"
-            v-model="formData.phone"
+            v-model="formData.phoneNumber"
             id="phone"
             placeholder="Phone Number"
             required
           />
-        </div>
-        <div class="form-field d-flex align-items-center">
-          <span class="fas fa-city"></span>
-          <select v-model="formData.city">
-            <option value="paris">Paris</option>
-            <option value="new york">New York</option>
-          </select>
         </div>
         <button class="btn mt-3">Register</button>
       </form>
@@ -77,20 +70,19 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { useStore } from '../stores/doctorStore'
+import { useDoctorStore } from '../stores/doctorStore'
 import { toast } from 'vue3-toastify'
 import NavbarLogReg from './NavbarLogReg.vue'
 
 const router = useRouter()
-const store = useStore()
+const store = useDoctorStore()
 
 const formData = ref({
   username: '',
   email: '',
   password: '',
   confirmPassword: '',
-  phone: '',
-  city: 'paris'
+  phone: ''
 })
 
 const register = async () => {
@@ -101,9 +93,10 @@ const register = async () => {
 
   try {
     await store.register(formData.value)
-    router.push('/')
+    toast.success('Registration successful')
+    router.push('/home')
   } catch (error) {
-    toast.error('Registration failed')
+    toast.error('Registration failed: ' + error.response.data.message)
   }
 }
 </script>

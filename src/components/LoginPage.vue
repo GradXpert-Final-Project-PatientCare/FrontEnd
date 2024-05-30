@@ -9,17 +9,16 @@
       <form class="p-3 mt-3" @submit.prevent="login">
         <div class="form-field d-flex align-items-center">
           <span class="far fa-user"></span>
-          <input type="text" v-model="username" placeholder="Username" />
+          <input type="email" v-model="email" placeholder="Email" required />
         </div>
         <div class="form-field d-flex align-items-center">
           <span class="fas fa-key"></span>
-          <input type="password" v-model="password" placeholder="Password" />
+          <input type="password" v-model="password" placeholder="Password" required />
         </div>
         <button class="btn mt-3">Login</button>
       </form>
       <div class="text-center fs-6">
-        <router-link to="/forgot-password">Forget password?</router-link> or
-        <router-link v-if="!isAuthenticated" to="/register">Sign up</router-link>
+        <router-link v-if="!store.isAuthenticated()" to="/register">Sign up</router-link>
         <router-link v-else to="/home">Home</router-link>
       </div>
     </div>
@@ -27,22 +26,27 @@
 </template>
 
 <script setup>
-import { useRouter } from 'vue-router'
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { useDoctorStore } from '../stores/doctorStore'
 import Navbar from './NavbarLogReg.vue'
+import { toast } from 'vue3-toastify'
 
 const router = useRouter()
+const store = useDoctorStore()
 
-const isAuthenticated = ref(false) // Tandai apakah pengguna telah terautentikasi
-const username = ref('')
+const email = ref('')
 const password = ref('')
 
-const login = () => {
-  // Logic untuk proses login
-  // Contoh sederhana: hanya menetapkan isAuthenticated menjadi true
-  isAuthenticated.value = true
-  // Redirect ke halaman dashboard jika login berhasil
-  router.push('/home')
+const login = async () => {
+  try {
+    await store.login({ email: email.value, password: password.value })
+    console.log('Login successful, navigating to home')
+    router.push('/home')
+  } catch (error) {
+    toast.error('Login Failed: ' + (error.response.data.message || 'Unknown error'))
+    console.error('Login failed: ' + (error.response.data.message || error.message))
+  }
 }
 </script>
 

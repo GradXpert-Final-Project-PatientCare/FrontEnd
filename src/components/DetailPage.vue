@@ -46,11 +46,11 @@
             alt="Gambar Dokter"
           />
           <div class="mt-3">
-            <p><strong>Nama Dokter:</strong> {{ doctor.name }}</p>
-            <p><strong>Spesialis:</strong> {{ doctor.specialty }}</p>
-            <p><strong>Alamat Praktek:</strong> {{ doctor.address }}</p>
+            <p><strong>Nama Dokter:</strong> {{ doctor.nama }}</p>
+            <p><strong>Spesialis:</strong> {{ doctor.spesialis }}</p>
+            <p><strong>Alamat Praktek:</strong> {{ doctor.alamatPraktek }}</p>
             <p><strong>Jadwal Praktek:</strong> {{ doctor.schedule }}</p>
-            <p><strong>Phone Number:</strong> {{ doctor.phone }}</p>
+            <p><strong>Phone Number:</strong> {{ doctor.telepon }}</p>
             <p><strong>Email:</strong> {{ doctor.email }}</p>
           </div>
           <div class="text-end mt-3">
@@ -80,13 +80,12 @@ const doctor = ref(null)
 
 onMounted(async () => {
   const doctorId = route.params.id
-  console.log('Fetched doctorId from route:', doctorId) // Log the doctorId
-  await store.fetchDoctors()
-  console.log('Fetched doctors:', store.doctors) // Log the doctors list
-
-  // Ensure doctorId is the correct type
-  doctor.value = store.doctors.find((d) => d.id == doctorId) // Use == for type coercion
-  console.log('Found doctor:', doctor.value) // Log the found doctor
+  try {
+    await store.fetchDoctorById(doctorId)
+    doctor.value = store.doctor
+  } catch (error) {
+    console.error('Failed to fetch doctor details:', error)
+  }
 })
 </script>
 

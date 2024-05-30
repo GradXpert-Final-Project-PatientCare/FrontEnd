@@ -2,7 +2,7 @@
   <div>
     <CustomNavbar />
     <div class="container mt-4">
-      <h2>Buat Janji Temu</h2>
+      <h2>Edit Janji Temu</h2>
       <form @submit.prevent="handleSubmit">
         <div class="mb-3">
           <label for="doctor" class="form-label">Dokter</label>
@@ -28,7 +28,7 @@
           <label for="complaint" class="form-label">Keluhan</label>
           <textarea class="form-control" v-model="complaint" rows="3" required></textarea>
         </div>
-        <button type="submit" class="btn btn-primary">Buat Janji</button>
+        <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
       </form>
       <div class="mt-3">
         <router-link to="/appointment-history" class="btn btn-secondary">
@@ -42,12 +42,10 @@
 <script setup>
 import { ref, onMounted, watch, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { useDoctorStore } from '../stores/doctorStore'
 import { useAppointmentStore } from '../stores/appointmentStore'
 import { toast } from 'vue3-toastify'
 import CustomNavbar from './CustomNavbar.vue'
 
-const doctorStore = useDoctorStore()
 const appointmentStore = useAppointmentStore()
 
 const route = useRoute()
@@ -59,24 +57,33 @@ const selectedTimeslotId = ref('')
 const complaint = ref('')
 const timeslots = ref([])
 const doctorName = ref('')
-const doctorIdFromQuery = route.query.doctorId || ''
+const appointmentId = route.params.id || ''
 
 onMounted(async () => {
-  if (doctorIdFromQuery) {
-    await doctorStore.fetchDoctorById(doctorIdFromQuery)
-    const doctor = doctorStore.doctor
-    if (doctor) {
-      selectedDoctorId.value = doctor.id
-      doctorName.value = doctor.nama
-      await fetchTimeslots()
-    } else {
-      console.error('Doctor not found')
+  try {
+    if (appointmentId) {
+      const appointment = await appointmentStore.fetchAppointmentById(appointmentId)
+      if (appointment) {
+        console.log('Fetched appointment:', appointment) // Log data untuk verifikasi
+        selectedDoctorId.value = appointment.dokterId // Pastikan doctorId digunakan dengan benar
+        console.log('Doctor ID:', selectedDoctorId.value) // Log untuk verifikasi
+        selectedDate.value = appointment.tanggal
+        selectedTimeslotId.value = appointment.TimeslotId
+        complaint.value = appointment.keterangan
+        doctorName.value = appointment.dokter
+        await fetchTimeslots()
+      } else {
+        throw new Error('Appointment not found')
+      }
     }
+  } catch (error) {
+    console.error('Error fetching appointment:', error)
+    toast.error('Failed to fetch appointment details')
   }
 })
 
-watch([selectedDoctorId], async () => {
-  if (selectedDoctorId.value) {
+watch(selectedDoctorId, async (newVal) => {
+  if (newVal) {
     await fetchTimeslots()
   }
 })
@@ -103,17 +110,18 @@ const filteredTimeslots = computed(() => {
 const handleSubmit = async () => {
   try {
     const appointment = {
+      id: appointmentId,
       DoctorId: selectedDoctorId.value,
       TimeslotId: selectedTimeslotId.value,
       keterangan: complaint.value
     }
-    await appointmentStore.createAppointment(appointment)
-    toast.success('Appointment created successfully!')
+    await appointmentStore.updateAppointment(appointment)
+    toast.success('Appointment updated successfully!')
     setTimeout(() => {
       router.push('/appointment-history')
     }, 4000)
   } catch (error) {
-    toast.error('Failed to create appointment')
+    toast.error('Failed to save appointment')
   }
 }
 </script>
