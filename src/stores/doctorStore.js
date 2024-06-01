@@ -1,85 +1,107 @@
 // src/stores/doctorStore.js
 import { defineStore } from 'pinia'
+import { ref, computed } from 'vue'
 import apiClient from '../services/axios'
 
-export const useDoctorStore = defineStore('doctor', {
-  state: () => ({
-    user: null,
-    token: localStorage.getItem('token') || null,
-    doctors: [],
-    totalDoctors: 0, // for pagination
-    appointments: [],
-    messageError: '',
-    doctor: null // Tambahkan state untuk detail dokter
-  }),
-  actions: {
-    async fetchDoctors(page = 1, search = '') {
-      try {
-        const response = await apiClient.get('/doctor', {
-          params: { page, search }
-        })
-        this.doctors = response.data.data.rows
-        this.totalDoctors = response.data.data.count
-      } catch (error) {
-        console.error(error)
-      }
-    },
-    async fetchAppointments() {
-      try {
-        const response = await apiClient.get('/appointments', {
-          headers: { Authorization: `Bearer ${this.token}` }
-        })
-        this.appointments = response.data
-      } catch (error) {
-        console.error(error)
-      }
-    },
-    async login(credentials) {
-      try {
-        const response = await apiClient.post('/user/login', credentials)
-        const data = response.data.data // Mengambil data dari respons
-        this.token = data.accessToken
-        this.user = {
-          email: data.email,
-          username: data.username,
-          rules: data.rules
-        }
-        localStorage.setItem('token', this.token)
-        localStorage.setItem('user', JSON.stringify(this.user)) // Menyimpan user ke localStorage
-        console.log('Login successful:', this.user)
-      } catch (error) {
-        console.error(error)
-        this.messageError = error.response.data.message || 'Login failed'
-        throw error
-      }
-    },
-    async register(data) {
-      try {
-        const response = await apiClient.post('/user/register', data)
-        console.log('Registration successful:', response.data)
-      } catch (error) {
-        console.error(error)
-        throw error
-      }
-    },
-    logout() {
-      this.user = null
-      this.token = null
-      localStorage.removeItem('token')
-      localStorage.removeItem('user') // Menghapus user dari localStorage
-    },
-    isAuthenticated() {
-      return !!this.token
-    },
-    async fetchDoctorById(id) {
-      // Tambahkan metode ini
-      try {
-        const response = await apiClient.get(`/doctor/${id}`)
-        this.doctor = response.data.data
-      } catch (error) {
-        console.error(error)
-        throw error
-      }
+export const useDoctorStore = defineStore('doctor', () => {
+  const user = ref(JSON.parse(localStorage.getItem('user')) || null)
+  const token = ref(localStorage.getItem('token') || null)
+  const doctors = ref([])
+  const totalDoctors = ref(0)
+  const appointments = ref([])
+  const messageError = ref('')
+  const doctor = ref(null)
+
+  const handleApiError = (error) => {
+    console.error(error)
+    messageError.value = error.response?.data?.message || error.message || 'An error occurred'
+  }
+
+  const fetchDoctors = async (page = 1, search = '') => {
+    try {
+      const response = await apiClient.get('/doctor', {
+        params: { page, search }
+      })
+      doctors.value = response.data.data.rows
+      totalDoctors.value = response.data.data.count
+    } catch (error) {
+      handleApiError(error)
     }
+  }
+
+  const fetchAppointments = async () => {
+    try {
+      const response = await apiClient.get('/appointments', {
+        headers: { Authorization: `Bearer ${token.value}` }
+      })
+      appointments.value = response.data
+    } catch (error) {
+      handleApiError(error)
+    }
+  }
+
+  const login = async (credentials) => {
+    try {
+      const response = await apiClient.post('/user/login', credentials)
+      const data = response.data.data
+      token.value = data.accessToken
+      user.value = {
+        email: data.email,
+        username: data.username,
+        rules: data.rules
+      }
+      localStorage.setItem('token', token.value)
+      localStorage.setItem('user', JSON.stringify(user.value))
+      console.log('Login successful:', user.value)
+    } catch (error) {
+      handleApiError(error)
+      throw error
+    }
+  }
+
+  const register = async (data) => {
+    try {
+      const response = await apiClient.post('/user/register', data)
+      console.log('Registration successful:', response.data)
+    } catch (error) {
+      handleApiError(error)
+      throw error
+    }
+  }
+
+  const logout = () => {
+    user.value = null
+    token.value = null
+    localStorage.removeItem('token')
+    localStorage.removeItem('user')
+  }
+
+  const isAuthenticated = computed(() => !!token.value)
+
+  const fetchDoctorById = async (id) => {
+    try {
+      const response = await apiClient.get(`/doctor/${id}`)
+      doctor.value = response.data.data
+    } catch (error) {
+      handleApiError(error)
+      throw error
+    }
+  }
+
+  return {
+    user,
+    token,
+    doctors,
+    totalDoctors,
+    appointments,
+    messageError,
+    doctor,
+    fetchDoctors,
+    fetchAppointments,
+    login,
+    register,
+    logout,
+    isAuthenticated,
+    fetchDoctorById
   }
 })

@@ -18,7 +18,7 @@
         <button class="btn mt-3">Login</button>
       </form>
       <div class="text-center fs-6">
-        <router-link v-if="!store.isAuthenticated()" to="/register">Sign up</router-link>
+        <router-link v-if="!store.isAuthenticated" to="/register">Sign up</router-link>
         <router-link v-else to="/home">Home</router-link>
       </div>
     </div>

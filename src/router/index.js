@@ -17,9 +17,6 @@ const router = createRouter({
     {
       path: '/about',
       name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
       component: () => import('../views/AboutView.vue')
     },
     {
@@ -66,8 +63,8 @@ const router = createRouter({
 // Middleware untuk memeriksa otorisasi
 router.beforeEach((to, from, next) => {
   const store = useDoctorStore()
-  console.log('Navigating to:', to.path, 'Authenticated:', store.isAuthenticated())
-  if (to.matched.some((record) => record.meta.requiresAuth) && !store.isAuthenticated()) {
+  console.log('Navigating to:', to.path, 'Authenticated:', store.isAuthenticated)
+  if (to.matched.some((record) => record.meta.requiresAuth) && !store.isAuthenticated) {
     // Jika rute memerlukan otorisasi dan user tidak terotentikasi, arahkan ke halaman login
     next({ name: 'login' })
   } else {
