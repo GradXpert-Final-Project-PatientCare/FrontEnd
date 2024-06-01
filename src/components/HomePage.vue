@@ -29,11 +29,15 @@
         </div>
       </div>
       <div class="row justify-content-center mb-2">
-        <div class="col-md-4" v-for="doctor in sortedAndFilteredDoctors" :key="doctor.id">
+        <div
+          class="col-lg-4 col-md-6 col-sm-12"
+          v-for="doctor in sortedAndFilteredDoctors"
+          :key="doctor.id"
+        >
           <div
             class="card mx-auto my-3"
             style="
-              width: 18rem;
+              width: 100%;
               box-shadow:
                 rgba(255, 255, 255, 0.1) 0px 1px 1px 0px inset,
                 rgba(50, 50, 93, 0.25) 0px 50px 100px -20px,
@@ -160,8 +164,18 @@ const changePage = (page) => {
 .img-container {
   width: 100%;
   height: 200px;
-  background-size: contain; /* Gambar akan muat di dalam container tanpa terpotong */
+  background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+  border-top-left-radius: 0.25rem;
+  border-top-right-radius: 0.25rem;
+}
+
+.card {
+  transition: transform 0.2s;
+}
+
+.card:hover {
+  transform: scale(1.05);
 }
 </style>
