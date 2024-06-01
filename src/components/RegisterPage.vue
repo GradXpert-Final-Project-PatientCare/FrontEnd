@@ -72,7 +72,7 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useDoctorStore } from '../stores/doctorStore'
 import { toast } from 'vue3-toastify'
-import NavbarLogReg from './NavbarLogReg.vue'
+import NavbarLogReg from './CustomNavbar.vue'
 
 const router = useRouter()
 const store = useDoctorStore()

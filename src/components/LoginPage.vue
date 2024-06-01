@@ -29,7 +29,7 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useDoctorStore } from '../stores/doctorStore'
-import Navbar from './NavbarLogReg.vue'
+import Navbar from './CustomNavbar.vue'
 import { toast } from 'vue3-toastify'
 
 const router = useRouter()

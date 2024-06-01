@@ -26,9 +26,6 @@
               >Appointment History</router-link
             >
           </li>
-          <li class="nav-item">
-            <router-link class="nav-link" to="/new-appointment">Buat Janji</router-link>
-          </li>
         </ul>
         <ul class="navbar-nav ms-auto">
           <template v-if="isAuthenticated">
@@ -36,14 +33,18 @@
               <span class="nav-link">Welcome, {{ user.username }}</span>
             </li>
             <li class="nav-item">
-              <button class="btn btn-outline-light me-2" @click="handleLogout">Logout</button>
+              <button class="btn btn-outline-light" @click="handleLogout">Logout</button>
             </li>
           </template>
           <template v-else>
-            <li class="nav-item">
+            <li v-if="isLoginPage" class="nav-item">
+              <router-link class="btn btn-outline-light me-2" to="/register">Register</router-link>
+            </li>
+            <li v-if="isRegisterPage" class="nav-item">
               <router-link class="btn btn-outline-light me-2" to="/login">Login</router-link>
             </li>
-            <li class="nav-item">
+            <li v-if="!isLoginPage && !isRegisterPage" class="nav-item">
+              <router-link class="btn btn-outline-light me-2" to="/login">Login</router-link>
               <router-link class="btn btn-outline-light" to="/register">Register</router-link>
             </li>
           </template>
@@ -55,14 +56,18 @@
 
 <script setup>
 import { computed } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { useDoctorStore } from '../stores/doctorStore'
 
 const store = useDoctorStore()
 const router = useRouter()
+const route = useRoute()
 
 const isAuthenticated = computed(() => store.isAuthenticated)
 const user = computed(() => store.user)
+
+const isLoginPage = computed(() => route.path === '/login')
+const isRegisterPage = computed(() => route.path === '/register')
 
 const handleLogout = () => {
   store.logout()
