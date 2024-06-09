@@ -12,15 +12,27 @@
           <label for="date" class="form-label">Tanggal Janji Temu</label>
           <select class="form-select" v-model="selectedDate" @change="filterTimeslots" required>
             <option v-for="date in uniqueDates" :key="date" :value="date">
-              {{ new Date(date).toLocaleDateString() }}
+              {{
+                new Date(date).toLocaleDateString('id-ID', {
+                  weekday: 'long',
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric'
+                })
+              }}
             </option>
           </select>
         </div>
         <div class="mb-3">
           <label for="timeslot" class="form-label">Pilih Waktu</label>
           <select class="form-select" v-model="selectedTimeslotId" required>
-            <option v-for="timeslot in filteredTimeslots" :key="timeslot.id" :value="timeslot.id">
-              {{ timeslot.hari }} - {{ timeslot.waktu }}
+            <option
+              v-for="timeslot in filteredTimeslots"
+              :key="timeslot.id"
+              :value="timeslot.id"
+              :disabled="timeslot.kuota === 0"
+            >
+              {{ formatTime(timeslot.waktu) }} (Kuota: {{ timeslot.kuota }})
             </option>
           </select>
         </div>
@@ -106,6 +118,12 @@ const uniqueDates = computed(() => {
 const filteredTimeslots = computed(() => {
   return timeslots.value.filter((timeslot) => timeslot.tanggal === selectedDate.value)
 })
+
+const formatTime = (waktu) => {
+  // Pastikan format waktu adalah HH:mm:ss
+  const timeParts = waktu.split(':')
+  return `${timeParts[0]}:${timeParts[1]}`
+}
 
 const handleSubmit = async () => {
   try {

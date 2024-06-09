@@ -50,7 +50,7 @@
               <p><strong>Jadwal Praktek:</strong></p>
               <ul class="list-unstyled">
                 <li v-for="(schedule, index) in doctor.schedule" :key="index">
-                  {{ schedule.hari }}: {{ schedule.waktu }}
+                  {{ schedule.hari }}: {{ formatTime(schedule.waktu) }}
                 </li>
               </ul>
               <p><strong>Phone Number:</strong> {{ doctor.telepon }}</p>
@@ -93,6 +93,12 @@ onMounted(async () => {
     console.error('Failed to fetch doctor details:', error)
   }
 })
+
+const formatTime = (waktu) => {
+  // Pastikan format waktu adalah HH:mm:ss
+  const timeParts = waktu.split(':')
+  return `${timeParts[0]}:${timeParts[1]}`
+}
 </script>
 
 <style scoped>

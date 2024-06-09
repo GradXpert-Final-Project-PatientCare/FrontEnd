@@ -32,11 +32,17 @@
           <div class="card-body">
             <h5 class="card-title">{{ appointment.dokter }}</h5>
             <p class="card-text">
-              <strong>Tanggal:</strong> {{ new Date(appointment.tanggal).toLocaleDateString() }}
+              <strong>Tanggal:</strong>
+              {{
+                new Date(appointment.tanggal).toLocaleDateString('id-ID', {
+                  weekday: 'long',
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric'
+                })
+              }}
             </p>
-            <p class="card-text">
-              <strong>Waktu:</strong> {{ appointment.hari }} - {{ appointment.waktu }}
-            </p>
+            <p class="card-text"><strong>Waktu:</strong> {{ formatTime(appointment.waktu) }} WIB</p>
             <p class="card-text"><strong>Keluhan:</strong> {{ appointment.keterangan }}</p>
             <p class="card-text">
               <strong>Status:</strong>
@@ -52,7 +58,7 @@
               </button>
               <button
                 class="btn btn-danger"
-                @click="cancelAppointment(appointment.id)"
+                @click="cancelAppointment(appointment)"
                 v-if="appointment.status === 'dipesan'"
               >
                 Cancel
@@ -82,22 +88,21 @@ const searchQuery = ref('')
 const statusFilter = ref('')
 const sortOrder = ref('newest')
 
-const appointments = ref([])
+const appointments = computed(() => appointmentStore.appointments)
 
 onMounted(async () => {
   await appointmentStore.fetchAllAppointments()
-  appointments.value = appointmentStore.appointments
 })
 
 const editAppointment = (appointment) => {
   router.push({ path: `/edit-appointment/${appointment.id}` })
 }
 
-const cancelAppointment = async (appointmentId) => {
+const cancelAppointment = async (appointment) => {
   try {
-    await appointmentStore.cancelAppointment(appointmentId)
+    await appointmentStore.cancelAppointment(appointment.id)
     toast.success('Appointment canceled successfully!')
-    appointments.value = appointments.value.filter((a) => a.id !== appointmentId)
+    appointment.status = 'dibatalkan'
   } catch (error) {
     toast.error('Failed to cancel appointment')
   }
@@ -109,7 +114,7 @@ const filteredAppointments = computed(() => {
       (appointment) =>
         (!statusFilter.value || appointment.status === statusFilter.value) &&
         (appointment.dokter.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-          new Date(appointment.tanggal).toLocaleDateString().includes(searchQuery.value))
+          new Date(appointment.tanggal).toLocaleDateString('id-ID').includes(searchQuery.value))
     )
     .sort((a, b) => {
       return sortOrder.value === 'newest'
@@ -117,6 +122,12 @@ const filteredAppointments = computed(() => {
         : new Date(a.tanggal) - new Date(b.tanggal)
     })
 })
+
+const formatTime = (waktu) => {
+  // Pastikan format waktu adalah HH:mm:ss
+  const timeParts = waktu.split(':')
+  return `${timeParts[0]}:${timeParts[1]}`
+}
 
 const statusClass = (status) => {
   switch (status) {

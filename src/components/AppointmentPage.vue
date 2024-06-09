@@ -12,15 +12,27 @@
           <label for="date" class="form-label">Tanggal Janji Temu</label>
           <select class="form-select" v-model="selectedDate" @change="filterTimeslots" required>
             <option v-for="date in uniqueDates" :key="date" :value="date">
-              {{ new Date(date).toLocaleDateString() }}
+              {{
+                new Date(date).toLocaleDateString('id-ID', {
+                  weekday: 'long',
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric'
+                })
+              }}
             </option>
           </select>
         </div>
         <div class="mb-3">
           <label for="timeslot" class="form-label">Pilih Waktu</label>
           <select class="form-select" v-model="selectedTimeslotId" required>
-            <option v-for="timeslot in filteredTimeslots" :key="timeslot.id" :value="timeslot.id">
-              {{ timeslot.hari }} - {{ timeslot.waktu }}
+            <option
+              v-for="timeslot in filteredTimeslots"
+              :key="timeslot.id"
+              :value="timeslot.id"
+              :disabled="timeslot.kuota === 0"
+            >
+              {{ formatTime(timeslot.waktu) }} (Kuota: {{ timeslot.kuota }})
             </option>
           </select>
         </div>
@@ -40,15 +52,12 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch, computed, inject } from 'vue'
+import { ref, onMounted, watch, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useDoctorStore } from '../stores/doctorStore'
 import { useAppointmentStore } from '../stores/appointmentStore'
 import { toast } from 'vue3-toastify'
 import CustomNavbar from './CustomNavbar.vue'
-import apiClient from '../services/axios'
-const snap = inject('snap')
-
 
 const doctorStore = useDoctorStore()
 const appointmentStore = useAppointmentStore()
@@ -103,6 +112,12 @@ const filteredTimeslots = computed(() => {
   return timeslots.value.filter((timeslot) => timeslot.tanggal === selectedDate.value)
 })
 
+const formatTime = (waktu) => {
+  // Pastikan format waktu adalah HH:mm:ss
+  const timeParts = waktu.split(':')
+  return `${timeParts[0]}:${timeParts[1]}`
+}
+
 const handleSubmit = async () => {
   try {
     const appointment = {
@@ -110,16 +125,10 @@ const handleSubmit = async () => {
       TimeslotId: selectedTimeslotId.value,
       keterangan: complaint.value
     }
-    const response = await apiClient.post('/transaction/create', appointment)
-    // await appointmentStore.createAppointment(appointment)
-    console.log(response);
-    if (response.data.status === 200){
-      snap.pay(response.data.data)
-      toast.success('Transaction created successfully!')
-    }
-    // setTimeout(() => {
-    //   router.push('/appointment-history')
-    // }, 4000)
+    await appointmentStore.createAppointment(appointment)
+    setTimeout(() => {
+      router.push('/appointment-history')
+    }, 4000)
   } catch (error) {
     console.log(error)
     toast.error('Failed to create appointment')

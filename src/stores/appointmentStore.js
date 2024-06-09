@@ -1,12 +1,13 @@
-// src/stores/appointmentStore.js
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { ref, inject } from 'vue'
 import apiClient from '../services/axios'
+import { toast } from 'vue3-toastify'
 
 export const useAppointmentStore = defineStore('appointmentStore', () => {
   const appointments = ref([])
   const timeslots = ref([])
   const messageError = ref('')
+  const snap = inject('snap')
 
   const handleApiError = (error) => {
     console.error(error)
@@ -88,13 +89,28 @@ export const useAppointmentStore = defineStore('appointmentStore', () => {
 
   const createAppointment = async (appointment) => {
     try {
-      const response = await apiClient.post('/appointment/create', appointment)
+      const response = await apiClient.post('/transaction/create', appointment)
       appointments.value.push(response.data.data)
+      console.log(response)
+      if (response.data.status === 200) {
+        snap.pay(response.data.data)
+        toast.success('Transaction created successfully!')
+      }
     } catch (error) {
       handleApiError(error)
       throw error
     }
   }
+
+  // const createAppointment = async (appointment) => {
+  //   try {
+  //     const response = await apiClient.post('/appointment/create', appointment)
+  //     appointments.value.push(response.data.data)
+  //   } catch (error) {
+  //     handleApiError(error)
+  //     throw error
+  //   }
+  // }
 
   const updateAppointment = async (appointment) => {
     try {
