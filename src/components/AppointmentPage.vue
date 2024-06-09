@@ -40,12 +40,15 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch, computed } from 'vue'
+import { ref, onMounted, watch, computed, inject } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useDoctorStore } from '../stores/doctorStore'
 import { useAppointmentStore } from '../stores/appointmentStore'
 import { toast } from 'vue3-toastify'
 import CustomNavbar from './CustomNavbar.vue'
+import apiClient from '../services/axios'
+const snap = inject('snap')
+
 
 const doctorStore = useDoctorStore()
 const appointmentStore = useAppointmentStore()
@@ -107,12 +110,18 @@ const handleSubmit = async () => {
       TimeslotId: selectedTimeslotId.value,
       keterangan: complaint.value
     }
-    await appointmentStore.createAppointment(appointment)
-    toast.success('Appointment created successfully!')
-    setTimeout(() => {
-      router.push('/appointment-history')
-    }, 4000)
+    const response = await apiClient.post('/transaction/create', appointment)
+    // await appointmentStore.createAppointment(appointment)
+    console.log(response);
+    if (response.data.status === 200){
+      snap.pay(response.data.data)
+      toast.success('Transaction created successfully!')
+    }
+    // setTimeout(() => {
+    //   router.push('/appointment-history')
+    // }, 4000)
   } catch (error) {
+    console.log(error)
     toast.error('Failed to create appointment')
   }
 }
