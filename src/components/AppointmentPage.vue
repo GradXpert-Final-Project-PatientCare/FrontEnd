@@ -40,6 +40,10 @@
           <label for="complaint" class="form-label">Keluhan</label>
           <textarea class="form-control" v-model="complaint" rows="3" required></textarea>
         </div>
+        <!-- Informasi Biaya -->
+        <div class="alert alert-info" role="alert">
+          Membuat janji temu akan dikenakan biaya sebesar 50.000 IDR.
+        </div>
         <button type="submit" class="btn btn-primary">Buat Janji</button>
       </form>
       <div class="mt-3">
