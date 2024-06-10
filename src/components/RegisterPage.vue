@@ -4,49 +4,55 @@
 
     <div class="wrapper">
       <div class="logo">
-        <img src="../assets/logo.png" alt="" />
+        <img src="../assets/logo.png" alt="Logo" />
       </div>
       <div class="text-center mt-4 name">Register</div>
       <form class="p-3 mt-3" @submit.prevent="register">
-        <div class="form-field d-flex align-items-center">
-          <span class="far fa-user"></span>
-          <input
-            type="text"
-            v-model="formData.username"
-            id="username"
-            placeholder="Username"
-            required
-          />
-        </div>
-        <div class="form-field d-flex align-items-center">
-          <span class="fas fa-envelope"></span>
-          <input
-            type="email"
-            v-model="formData.email"
-            id="email"
-            placeholder="Email Address"
-            required
-          />
-        </div>
-        <div class="form-field d-flex align-items-center">
-          <span class="fas fa-key"></span>
-          <input
-            type="password"
-            v-model="formData.password"
-            id="password"
-            placeholder="Password"
-            required
-          />
-        </div>
-        <div class="form-field d-flex align-items-center">
-          <span class="fas fa-key"></span>
-          <input
-            type="password"
-            v-model="formData.confirmPassword"
-            id="confirmPassword"
-            placeholder="Confirm Password"
-            required
-          />
+        <div class="form-row">
+          <div class="form-column">
+            <div class="form-field d-flex align-items-center">
+              <span class="far fa-user"></span>
+              <input
+                type="text"
+                v-model="formData.username"
+                id="username"
+                placeholder="Username"
+                required
+              />
+            </div>
+            <div class="form-field d-flex align-items-center">
+              <span class="fas fa-envelope"></span>
+              <input
+                type="email"
+                v-model="formData.email"
+                id="email"
+                placeholder="Email Address"
+                required
+              />
+            </div>
+          </div>
+          <div class="form-column">
+            <div class="form-field d-flex align-items-center">
+              <span class="fas fa-key"></span>
+              <input
+                type="password"
+                v-model="formData.password"
+                id="password"
+                placeholder="Password"
+                required
+              />
+            </div>
+            <div class="form-field d-flex align-items-center">
+              <span class="fas fa-key"></span>
+              <input
+                type="password"
+                v-model="formData.confirmPassword"
+                id="confirmPassword"
+                placeholder="Confirm Password"
+                required
+              />
+            </div>
+          </div>
         </div>
         <div class="form-field d-flex align-items-center">
           <span class="fas fa-phone"></span>
@@ -102,10 +108,8 @@ const register = async () => {
 </script>
 
 <style scoped>
-/* Importing fonts from Google */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
 
-/* Reseting */
 * {
   margin: 0;
   padding: 0;
@@ -118,7 +122,7 @@ body {
 }
 
 .wrapper {
-  max-width: 350px;
+  max-width: 700px;
   min-height: 500px;
   margin: 80px auto;
   padding: 40px 30px 30px 30px;
@@ -157,16 +161,6 @@ body {
 .wrapper .form-field input {
   width: 100%;
   display: block;
-  border: none;
-  outline: none;
-  background: none;
-  font-size: 1.2rem;
-  color: #666;
-  padding: 10px 15px 10px 10px;
-}
-
-.wrapper .form-field select {
-  width: calc(100% - 20px);
   border: none;
   outline: none;
   background: none;
@@ -215,10 +209,28 @@ body {
   color: #039be5;
 }
 
-.wrapper .check-label {
-  font-size: 0.8rem;
-  color: #666;
-  padding-left: 5px;
+.wrapper .form-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.wrapper .form-column {
+  width: 48%;
+}
+
+@media (max-width: 768px) {
+  .wrapper {
+    max-width: 90%;
+    margin: 40px auto;
+  }
+
+  .wrapper .form-row {
+    flex-direction: column;
+  }
+
+  .wrapper .form-column {
+    width: 100%;
+  }
 }
 
 @media (max-width: 380px) {
