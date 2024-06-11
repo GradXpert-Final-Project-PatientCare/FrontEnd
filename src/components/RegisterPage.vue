@@ -88,7 +88,7 @@ const formData = ref({
   email: '',
   password: '',
   confirmPassword: '',
-  phone: ''
+  phoneNumber: ''
 })
 
 const register = async () => {

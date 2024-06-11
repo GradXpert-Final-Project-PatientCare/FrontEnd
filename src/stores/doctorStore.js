@@ -17,10 +17,10 @@ export const useDoctorStore = defineStore('doctor', () => {
     messageError.value = error.response?.data?.message || error.message || 'An error occurred'
   }
 
-  const fetchDoctors = async (page = 1, search = '') => {
+  const fetchDoctors = async (page = 1, search = '', category = '', sort = '') => {
     try {
       const response = await apiClient.get('/doctor', {
-        params: { page, search }
+        params: { page, search, category, sort }
       })
       doctors.value = response.data.data.rows
       totalDoctors.value = response.data.data.count

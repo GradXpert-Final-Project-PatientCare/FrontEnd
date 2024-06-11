@@ -17,9 +17,16 @@
         <div class="col-md-8 d-flex justify-content-between mb-3">
           <select v-model="filterBySpecialty" class="form-select" @change="fetchDoctors">
             <option value="">All Specialties</option>
-            <option value="Sp. Mata">Sp. Mata</option>
+            <option value="Sp. Anak">Sp. Anak</option>
+            <option value="Sp. Bedah">Sp. Bedah</option>
+            <option value="Sp. Gigi">Sp. Gigi</option>
             <option value="Sp. Jantung">Sp. Jantung</option>
             <option value="Sp. Jiwa">Sp. Jiwa</option>
+            <option value="Sp. Kandungan">Sp. Kandungan</option>
+            <option value="Sp. Kulit">Sp. Kulit</option>
+            <option value="Sp. Mata">Sp. Mata</option>
+            <option value="Sp. Penyakit Dalam">Sp. Penyakit Dalam</option>
+            <option value="Sp. Saraf">Sp. Saraf</option>
             <!-- Add more specialties as needed -->
           </select>
           <select v-model="sortBy" class="form-select" @change="fetchDoctors">
@@ -31,7 +38,7 @@
       <div class="row justify-content-center mb-2">
         <div
           class="col-lg-4 col-md-6 col-sm-12"
-          v-for="doctor in sortedAndFilteredDoctors"
+          v-for="doctor in store.doctors"
           :key="doctor.id"
         >
           <div
@@ -107,7 +114,7 @@ const pageSize = 5
 
 const fetchDoctors = async () => {
   try {
-    await store.fetchDoctors(currentPage.value, searchQuery.value)
+    await store.fetchDoctors(currentPage.value, searchQuery.value, filterBySpecialty.value, sortBy.value)
   } catch (error) {
     toast.error('Failed to fetch doctors')
   }
@@ -118,39 +125,39 @@ onMounted(() => {
   fetchDoctors()
 })
 
-// Computed property for filtered and sorted doctors
-const sortedAndFilteredDoctors = computed(() => {
-  let filteredDoctors = store.doctors
+// // Computed property for filtered and sorted doctors
+// const sortedAndFilteredDoctors = computed(() => {
+//   let filteredDoctors = store.doctors
 
-  // Filter by specialty
-  if (filterBySpecialty.value) {
-    filteredDoctors = filteredDoctors.filter((doctor) =>
-      doctor.spesialis.toLowerCase().includes(filterBySpecialty.value.toLowerCase())
-    )
-  }
+//   // Filter by specialty
+//   if (filterBySpecialty.value) {
+//     filteredDoctors = filteredDoctors.filter((doctor) =>
+//       doctor.spesialis.toLowerCase().includes(filterBySpecialty.value.toLowerCase())
+//     )
+//   }
 
-  // Filter by search query
-  if (searchQuery.value) {
-    filteredDoctors = filteredDoctors.filter((doctor) =>
-      doctor.nama.toLowerCase().includes(searchQuery.value.toLowerCase())
-    )
-  }
+//   // Filter by search query
+//   if (searchQuery.value) {
+//     filteredDoctors = filteredDoctors.filter((doctor) =>
+//       doctor.nama.toLowerCase().includes(searchQuery.value.toLowerCase())
+//     )
+//   }
 
-  // Ensure filteredDoctors is an array before sorting
-  if (Array.isArray(filteredDoctors)) {
-    // Sort by selected criteria
-    return filteredDoctors.sort((a, b) => {
-      if (sortBy.value === 'nama') {
-        return a.nama.localeCompare(b.nama)
-      } else if (sortBy.value === 'experience') {
-        return b.experience - a.experience
-      }
-      return 0
-    })
-  } else {
-    return []
-  }
-})
+//   // Ensure filteredDoctors is an array before sorting
+//   if (Array.isArray(filteredDoctors)) {
+//     // Sort by selected criteria
+//     return filteredDoctors.sort((a, b) => {
+//       if (sortBy.value === 'nama') {
+//         return a.nama.localeCompare(b.nama)
+//       } else if (sortBy.value === 'experience') {
+//         return b.experience - a.experience
+//       }
+//       return 0
+//     })
+//   } else {
+//     return []
+//   }
+// })
 
 const totalPages = computed(() => Math.ceil(store.totalDoctors / pageSize))
 

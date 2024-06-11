@@ -130,9 +130,9 @@ const handleSubmit = async () => {
       keterangan: complaint.value
     }
     await appointmentStore.createAppointment(appointment)
-    setTimeout(() => {
-      router.push('/appointment-history')
-    }, 4000)
+    // setTimeout(() => {
+    //   router.push('/appointment-history')
+    // }, 4000)
   } catch (error) {
     console.log(error)
     toast.error('Failed to create appointment')
