@@ -31,11 +31,30 @@
         </ul>
         <ul class="navbar-nav ms-auto">
           <template v-if="isAuthenticated">
-            <li class="nav-item">
-              <span class="nav-link">Welcome, {{ user.username }}</span>
-            </li>
-            <li class="nav-item">
-              <button class="btn btn-outline-light" @click="handleLogout">Logout</button>
+            <li class="nav-item dropdown">
+              <a
+                class="nav-link dropdown-toggle"
+                href="#"
+                id="navbarDropdown"
+                role="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                Welcome, {{ user.username }}
+              </a>
+              <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                <li>
+                  <router-link class="dropdown-item dropdown-item-pointer" to="/profile"
+                    >Profile Settings</router-link
+                  >
+                </li>
+                <li><hr class="dropdown-divider" /></li>
+                <li>
+                  <button class="dropdown-item dropdown-item-pointer" @click="handleLogout">
+                    Logout
+                  </button>
+                </li>
+              </ul>
             </li>
           </template>
           <template v-else>
@@ -99,5 +118,14 @@ const handleLogout = () => {
 
 .me-2 {
   margin-right: 0.5rem;
+}
+
+.dropdown-item-pointer {
+  cursor: pointer;
+}
+
+.dropdown-item-pointer:hover {
+  background-color: #f8f9fa;
+  color: #20c997;
 }
 </style>

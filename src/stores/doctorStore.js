@@ -1,4 +1,3 @@
-// src/stores/doctorStore.js
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import apiClient from '../services/axios'
@@ -11,6 +10,7 @@ export const useDoctorStore = defineStore('doctor', () => {
   const appointments = ref([])
   const messageError = ref('')
   const doctor = ref(null)
+  const userProfile = ref(null)
 
   const handleApiError = (error) => {
     console.error(error)
@@ -88,6 +88,17 @@ export const useDoctorStore = defineStore('doctor', () => {
     }
   }
 
+  const fetchUserProfile = async () => {
+    try {
+      const response = await apiClient.get('/user/profile', {
+        headers: { Authorization: `Bearer ${token.value}` }
+      })
+      userProfile.value = response.data.data
+    } catch (error) {
+      handleApiError(error)
+    }
+  }
+
   return {
     user,
     token,
@@ -96,12 +107,14 @@ export const useDoctorStore = defineStore('doctor', () => {
     appointments,
     messageError,
     doctor,
+    userProfile,
     fetchDoctors,
     fetchAppointments,
     login,
     register,
     logout,
     isAuthenticated,
-    fetchDoctorById
+    fetchDoctorById,
+    fetchUserProfile
   }
 })
